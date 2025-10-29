@@ -1,0 +1,6 @@
+ds="$HOME/.termux"
+pp="$ds/bash.bashrc"
+masum="$ds/colors.properties"
+rm -rf "$masum"
+cp "$pp" $PREFIX/etc/
+termux-reload-settings
