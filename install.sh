@@ -1,4 +1,4 @@
-#bin/bash/'!¡
+#!/bin/bash
 clear
 # dx color
 r='\033[1;91m'
