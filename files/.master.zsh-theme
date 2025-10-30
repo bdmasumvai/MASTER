@@ -1,9 +1,9 @@
-# BD Master ZSH Theme
-local current_dir='%{$fg_bold[red]%}[%{$reset_color%}%~%{$fg_bold[red]%}]%{$reset_color%}'
-local git_branch='$(git_prompt_info)%{$reset_color%}'
+local current_dir='%{$fg_bold[red]%}[%{$reset_color%}%~% %{$fg_bold[red]%}]%{$reset_color%}'
+local git_branch='$()%{$reset_color%}'
+
 
 PROMPT="
-%(?,%{$fg_bold[cyan]%} ┌─╼%{$fg_bold[cyan]%}[%{$fg_bold[blue]%}MASTER%{$fg_bold[yellow]%}〄%{$fg_bold[green]%}%n%{$fg_bold[cyan]%}]%{$fg_bold[cyan]%}-%{$fg_bold[cyan]%}[%{$fg_bold[green]%}%(5~|%-1~/…/%2~|%4~)%{$fg_bold[cyan]%}]%{$reset_color%} ${git_branch}
+%(?,%{$fg_bold[cyan]%} ┌─╼%{$fg_bold[cyan]%}[%{$fg_bold[blue]%}MASTER%{$fg_bold[yellow]%}〄%{$fg_bold[green]%}MASUM%{$fg_bold[cyan]%}]%{$fg_bold[cyan]%}-%{$fg_bold[cyan]%}[%{$fg_bold[green]%}%(5~|%-1~/…/%2~|%4~)%{$fg_bold[cyan]%}]%{$reset_color%} ${git_branch}
 %{$fg_bold[cyan]%} └────╼%{$fg_bold[yellow]%} ❯%{$fg_bold[blue]%}❯%{$fg_bold[cyan]%}❯%{$reset_color%} ,%{$fg_bold[cyan]%} ┌─╼%{$fg_bold[cyan]%}[%{$fg_bold[green]%}%(5~|%-1~/…/%2~|%4~)%{$fg_bold[cyan]%}]%{$reset_color%}
 %{$fg_bold[cyan]%} └╼%{$fg_bold[cyan]%} ❯%{$fg_bold[blue]%}❯%{$fg_bold[cyan]%}❯%{$reset_color%} "
 
@@ -12,7 +12,7 @@ ZSH_THEME_GIT_PROMPT_SUFFIX="] %{$reset_color%}"
 
 setopt PROMPT_SUBST
 
-bindkey '^R' history-incremental-search-backward
+bindkey '^R' reset-prompt
 
 preexec() {
   if [[ $1 =~ ^(bash|sh|python|python3|nano|vim|vi|open|pkg|apt|php) ]] && [[ $(echo $1 | wc -w) -ge 2 ]]; then
@@ -53,10 +53,8 @@ precmd() {
   fi
 }
 
-# Git prompt info
-function git_prompt_info() {
-  local ref
-  ref=$(command git symbolic-ref HEAD 2> /dev/null) || \
-  ref=$(command git rev-parse --short HEAD 2> /dev/null) || return 0
-  echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$ZSH_THEME_GIT_PROMPT_SUFFIX"
-}
+
+
+
+
+
