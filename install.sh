@@ -1,7 +1,7 @@
 #!/bin/bash
 clear
 
-# dx color
+# BD color
 r='\033[1;91m'
 p='\033[1;95m'
 y='\033[1;93m'
@@ -10,7 +10,7 @@ n='\033[1;0m'
 b='\033[1;94m'
 c='\033[1;96m'
 
-# dx Symbol
+# BD Symbol
 X='\033[1;92m[\033[1;00m⎯꯭̽𓆩\033[1;92m]\033[1;96m'
 D='\033[1;92m[\033[1;00m〄\033[1;92m]\033[1;93m'
 E='\033[1;92m[\033[1;00m×\033[1;92m]\033[1;91m'
@@ -19,7 +19,7 @@ C='\033[1;92m[\033[1;00m</>\033[1;92m]\033[92m'
 lm='\033[96m▱▱▱▱▱▱▱▱▱▱▱▱\033[0m〄\033[96m▱▱▱▱▱▱▱▱▱▱▱▱\033[1;00m'
 dm='\033[93m▱▱▱▱▱▱▱▱▱▱▱▱\033[0m〄\033[93m▱▱▱▱▱▱▱▱▱▱▱▱\033[1;00m'
 
-# dx icon
+# BD icon
 OS="\uf6a6"
 HOST="\uf6c3"
 KER="\uf83c"
@@ -101,7 +101,8 @@ start() {
     type_effect() {
         local text="$1"
         local delay=$2
-        local term_width=$(tput cols)
+        local term_width
+        term_width=$(tput cols)
         local text_length=${#text}
         local padding=$(( (term_width - text_length) / 2 ))
         printf "%${padding}s" ""
@@ -163,7 +164,7 @@ help() {
     echo -e " ${g}Select option Click Enter button"
     echo
     echo -e " ${b}■ \e[4m${c}If you understand, click the Enter Button\e[0m ${b}▪︎${n}"
-    read -p ""
+    read -r -p ""
 }
 
 spin() {
@@ -181,6 +182,7 @@ spin() {
             spin_index=$(( (spin_index + 1) % ${#spinner[@]} ))
             sleep "$delay"
         done
+        wait "$pid" 2>/dev/null
         tput cnorm
         echo -e "\r\033[K\e[1;93m [Done $process_name]\e[0m"
         echo
@@ -194,7 +196,7 @@ spin() {
     packages=("git" "python" "ncurses-utils" "jq" "figlet" "termux-api" "lsd" "zsh" "ruby" "exa")
 
     for package in "${packages[@]}"; do
-        if ! command -v "$package" >/dev/null 2>&1 && ! dpkg -l | grep -q "^ii  $package "; then
+        if ! command -v "$package" >/dev/null 2>&1 && ! dpkg -l 2>/dev/null | grep -q "^ii  $package "; then
             echo -e "${A} ${y}Installing $package...${n}"
             pkg install "$package" -y >/dev/null 2>&1 &
             show_spinner "$package"
@@ -231,16 +233,14 @@ spin() {
         rm -rf "$PREFIX/etc/motd" >/dev/null 2>&1
     fi
     
-    if [ "$SHELL" != "$PREFIX/bin/zsh" ]; then
+    if [ "$SHELL" != "$PREFIX/bin/zsh" ] && [ -f "$PREFIX/bin/zsh" ]; then
         chsh -s zsh >/dev/null 2>&1 &
         show_spinner "zsh-shell"
     fi
     
-    if [ ! -f "$HOME/.zshrc" ]; then
-        if [ -d "$HOME/.oh-my-zsh" ]; then
-            cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$HOME/.zshrc" &
-            show_spinner "zshrc"
-        fi
+    if [ ! -f "$HOME/.zshrc" ] && [ -d "$HOME/.oh-my-zsh" ]; then
+        cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$HOME/.zshrc" &
+        show_spinner "zshrc"
     fi
     
     if [ ! -d "$HOME/.oh-my-zsh/plugins/zsh-autosuggestions" ]; then
@@ -256,7 +256,7 @@ spin() {
     fi
     
     if ! command -v lolcat >/dev/null 2>&1 && command -v gem >/dev/null 2>&1; then
-        echo "y" | gem install lolcat >/dev/null 2>&1 &
+        gem install lolcat >/dev/null 2>&1 &
         show_spinner "lolcat(gem)"
     fi
 }
@@ -286,10 +286,10 @@ setup() {
         chmod +x "$PREFIX/bin/remove"
     fi
     
-    termux-reload-settings
+    termux-reload-settings >/dev/null 2>&1
 }
 
-dxnetcheck() {
+BDnetcheck() {
     clear
     echo
     echo -e "               ${g}╔═══════════════╗"
@@ -336,7 +336,7 @@ donotchange() {
 
     local name=""
     while true; do
-        read -p "[+]──[Enter Your Name]────► " name
+        read -r -p "[+]──[Enter Your Name]────► " name
         echo
 
         if [[ ${#name} -ge 1 && ${#name} -le 8 ]]; then
@@ -356,7 +356,8 @@ donotchange() {
     local THEME_INPUT="$HOME/MASTER/files/.master.zsh-theme"
     local OUTPUT_ZSHRC="$HOME/.zshrc"
     local OUTPUT_THEME="$HOME/.oh-my-zsh/themes/master.zsh-theme"
-    local TEMP_FILE=$(mktemp)
+    local TEMP_FILE
+    TEMP_FILE=$(mktemp)
 
     if [ ! -f "$INPUT_FILE" ]; then
         echo -e "${E} ${r}Source file $INPUT_FILE not found${n}"
@@ -424,7 +425,7 @@ banner() {
 setupx() {
     if [ -d "$PREFIX" ]; then
         tr
-        dxnetcheck
+        BDnetcheck
         
         banner
         echo -e " ${C} ${y}Detected Termux on Android¡"
