@@ -1,6 +1,27 @@
+#!/bin/bash
+# BD Remove Script
+
 ds="$HOME/.termux"
 pp="$ds/bash.bashrc"
 masum="$ds/colors.properties"
-rm -rf "$masum"
-cp "$pp" $PREFIX/etc/
+font="$ds/font.ttf"
+
+# Remove custom files
+[ -f "$masum" ] && rm -f "$masum"
+[ -f "$font" ] && rm -f "$font"
+
+# Restore default bashrc if exists
+if [ -f "$pp" ]; then
+    cp "$pp" "$PREFIX/etc/bash.bashrc" 2>/dev/null
+fi
+
+# Remove chat command
+[ -f "$PREFIX/bin/chat" ] && rm -f "$PREFIX/bin/chat"
+[ -f "$PREFIX/bin/remove" ] && rm -f "$PREFIX/bin/remove"
+
+echo -e "\033[1;92m[+]\033[1;96m MASTER customization removed successfully!"
+echo -e "\033[1;93m[*]\033[1;96m Reloading Termux settings..."
+
 termux-reload-settings
+
+echo -e "\033[1;92m[✓]\033[1;96m Done! Restart Termux for complete cleanup."
